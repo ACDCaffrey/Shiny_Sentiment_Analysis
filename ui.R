@@ -4,16 +4,20 @@ ui <- fluidPage(
 
     sidebarLayout(position = "right",
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+          fileInput("input_file", "Load data", accept = ".csv"),
+          selectInput("column_select", 
+                      label = "Select Vars", 
+                      choices = c(""),
+                      multiple = TRUE)
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("distPlot")
+          tabsetPanel(
+            tabPanel("raw data", br(), DT::dataTableOutput("raw_data")),
+            tabPanel("wordcloud",),
+            tabPanel("sentiment analysis", )
+          )
         )
     )
 )

@@ -1,14 +1,40 @@
 
 server <- function(input, output, session) {
   
-  output$distPlot <- renderPlot({
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[, 2]
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = 'darkgray', border = 'white',
-         xlab = 'Waiting time to next eruption (in mins)',
-         main = 'Histogram of waiting times')
+  
+  # load data into reactive method
+  data_input <- reactive({
+    req(input$input_file)
+    read.csv(input$input_file$datapath)
   })
+  
+  # render data table
+  output$raw_data <- DT::renderDataTable({
+    
+    req(data_input())
+    
+    data <- data_input() %>% 
+      select(input$column_select)
+    
+    if(length(input$column_select) != 0){
+      datatable(data, 
+                options = list(scrollX=TRUE)) 
+    }
+  })
+  
+  observeEvent(data_input(),{
+    updateSelectInput(session, "column_select", choices = names(data_input()))
+  })
+  
+  # render selection for columns
+  # output$column_select <- renderUI({
+  #   
+  #   req(data)
+  # 
+  #   selectInput("column", 
+  #               label = "Select Columns", 
+  #               choices = names(data))
+  #   
+  # })
+  
 }
