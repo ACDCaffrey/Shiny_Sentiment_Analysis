@@ -26,6 +26,36 @@ server <- function(input, output, session) {
     updateSelectInput(session, "column_select", choices = names(data_input()))
   })
   
+  output$wordcloud <- renderWordcloud2({
+    
+    if(length(input$column_select) == 1){
+    
+      data <- 
+        data_input() %>% 
+        select(Positive_Review) %>% 
+        VectorSource() %>% 
+        Corpus() %>% 
+        tm_map(removeNumbers) %>% 
+        tm_map(removePunctuation) %>% 
+        tm_map(stripWhitespace) %>% 
+        tm_map(removeWords, c(stopwords("english"), "the"))
+        
+      data_matrix <- data %>% 
+        TermDocumentMatrix() %>% 
+        as.matrix() %>% 
+        rowSums() %>% 
+        sort(decreasing = TRUE)
+      
+      data_df <- 
+        data_matrix %>% 
+        data.frame(word = names(.), freq = .)
+      
+      wordcloud2(data = data_df)
+      
+    }
+    
+  })
+  
   # render selection for columns
   # output$column_select <- renderUI({
   #   

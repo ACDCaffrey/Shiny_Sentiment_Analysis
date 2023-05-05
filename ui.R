@@ -8,14 +8,17 @@ ui <- fluidPage(
           selectInput("column_select", 
                       label = "Select Vars", 
                       choices = c(""),
-                      multiple = TRUE)
+                      multiple = FALSE)
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
           tabsetPanel(
             tabPanel("raw data", br(), DT::dataTableOutput("raw_data")),
-            tabPanel("wordcloud",),
+            tabPanel("wordcloud", 
+              shinycssloaders::withSpinner(
+              wordcloud2Output("wordcloud"))
+              ),
             tabPanel("sentiment analysis", )
           )
         )
