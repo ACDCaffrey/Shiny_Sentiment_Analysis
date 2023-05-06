@@ -88,6 +88,8 @@ server <- function(input, output, session) {
                 by = join_by(word == word)) %>% 
       group_by(num) %>% 
       summarize(score = sum(value, na.rm = T)) %>% 
+      ungroup() %>% 
+      select(-num) %>% 
       cbind(raw, .) %>% 
       datatable(
         options = list(pageLength = 100)
